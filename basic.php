@@ -3,16 +3,16 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json; charset=utf-8');
 
 // Databasinställningar
-$db_host = 'localhost';
-$db_user = 'root';
-$db_pass = '';
-$db_name = 'db_example';
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$name = 'db_example';
 
 // Anslut till databasen
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+$conn = mysqli_connect($host, $user, $pass, $name);
 
 // Kontrollera anslutning
-if ($conn->connect_error) {
+if (!$conn) {
     echo json_encode([
         'success' => false,
         'error' => 'Databasfel'
@@ -21,10 +21,11 @@ if ($conn->connect_error) {
 }
 
 // Hämta en slumpmässig fakta
-$result = $conn->query("SELECT id, fact FROM chuck_norris_facts ORDER BY RAND() LIMIT 1");
+$sql = "SELECT id, fact FROM chuck_norris_facts ORDER BY RAND() LIMIT 1";
+$result = mysqli_query($conn, $sql);
 
 // Hämta rad
-$row = $result->fetch_assoc();
+$row = mysqli_fetch_assoc($result);
 
 // Skicka JSON
 echo json_encode([
