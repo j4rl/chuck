@@ -8,10 +8,10 @@ header('Content-Type: application/json; charset=utf-8');
 | Databasinställningar
 |--------------------------------------------------------------------------
 */
-$db_host = 'mockelngymnasiet.com.mysql';
-$db_user = 'mockelngymnasie';
-$db_pass = 'PPeTExVh';
-$db_name = 'mockelngymnasie';
+$db_host = 'localhost';
+$db_user = 'root';
+$db_pass = '';
+$db_name = 'db_example';
 
 /*
 |--------------------------------------------------------------------------
