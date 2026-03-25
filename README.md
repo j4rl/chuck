@@ -1,9 +1,25 @@
 # Chuck Norris Facts API
 
-Ett enkelt PHP-API som hämtar Chuck Norris-fakta från MySQL-tabellen `chuck_norris_facts`.
+Ett enkelt PHP-projekt med två API-varianter:
 
+- `index.php` - full API med flera query-parametrar.
+- `basic.php` - enkel API som alltid returnerar en slumpmässig fakta.
 
-## Parametrar
+## Bas-URL (lokalt)
+
+- Full API: `http://localhost/chuck/index.php`
+- Basic API: `http://localhost/chuck/basic.php`
+
+## Datamodell
+
+Båda filerna använder tabellen `chuck_norris_facts` med:
+
+- `id` (int)
+- `fact` (text/string)
+
+## `index.php` (full API)
+
+### Parametrar
 
 API:t stödjer följande query-parametrar:
 
@@ -14,23 +30,21 @@ API:t stödjer följande query-parametrar:
 
 Viktigt: använd bara en av dessa parametrar per anrop. Om flera skickas samtidigt returneras `400`.
 
-## Endpoints och exempel
+### Exempelanrop
 
-### 1) Slumpmässig fakta (default)
-
-Om inga parametrar skickas:
+1) Slumpmässig fakta (default)
 
 ```bash
 curl "http://localhost/chuck/index.php"
 ```
 
-### 2) Specifik fakta via ID
+2) Specifik fakta via ID
 
 ```bash
 curl "http://localhost/chuck/index.php?id=5"
 ```
 
-### 3) Flera slumpmässiga fakta
+3) Flera slumpmässiga fakta
 
 ```bash
 curl "http://localhost/chuck/index.php?count=3"
@@ -38,7 +52,7 @@ curl "http://localhost/chuck/index.php?count=3"
 
 Obs: om `count` är större än antal rader i tabellen begränsas resultatet automatiskt.
 
-### 4) Sök fakta
+4) Sök fakta
 
 ```bash
 curl "http://localhost/chuck/index.php?search=norris"
@@ -46,13 +60,13 @@ curl "http://localhost/chuck/index.php?search=norris"
 
 Obs: `search` måste vara minst 2 tecken.
 
-### 5) Hämta alla fakta
+5) Hämta alla fakta
 
 ```bash
 curl "http://localhost/chuck/index.php?all=1"
 ```
 
-## Exempel på lyckat svar
+### Exempel på lyckat svar (`index.php`)
 
 ```json
 {
@@ -73,7 +87,7 @@ curl "http://localhost/chuck/index.php?all=1"
 - `search`
 - `all`
 
-## Exempel på felsvar
+### Exempel på felsvar (`index.php`)
 
 ```json
 {
@@ -88,9 +102,47 @@ Vanliga felkoder:
 - `404` - ingen träff eller tom tabell.
 - `500` - databasfel eller oväntat serverfel.
 
-## Datamodell
+## `basic.php` (enkel API)
 
-Tabell: `chuck_norris_facts`
+`basic.php` är en minimal endpoint för snabb testning. Den:
 
-- `id` (int)
-- `fact` (text/string)
+- tillåter CORS med `Access-Control-Allow-Origin: *`
+- returnerar alltid JSON
+- tar inga query-parametrar
+- hämtar exakt 1 slumpmässig rad från `chuck_norris_facts`
+
+### Exempelanrop
+
+```bash
+curl "http://localhost/chuck/basic.php"
+```
+
+### Exempel på svar (`basic.php`)
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "12",
+    "fact": "Chuck Norris can divide by zero."
+  }
+}
+```
+
+Vid databasfel returneras:
+
+```json
+{
+  "success": false,
+  "error": "Databasfel"
+}
+```
+
+## Databasinställningar
+
+Observera att filerna just nu har olika DB-konfiguration:
+
+- `index.php` använder en uppsättning DB-credentials.
+- `basic.php` använder `localhost`, `root`, tomt lösenord och databasen `db_example`.
+
+Om båda endpoints ska fungera mot samma data, sätt samma databasinställningar i båda filerna.

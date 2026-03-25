@@ -1,6 +1,14 @@
 <?php
 declare(strict_types=1);
 
+/*
+|--------------------------------------------------------------------------
+| CORS-huvud
+|  CORS (Cross-Origin Resource Sharing) är en mekanism som tillåter webbläsare 
+|  att göra förfrågningar till en annan domän än den som serverar webbplatsen. 
+|  Detta är viktigt för API:er som kan användas av klienter på olika domäner.
+|--------------------------------------------------------------------------
+*/
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -11,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// Sätt rätt Content-Type för alla svar, så att klienter vet att det är JSON som returneras
 header('Content-Type: application/json; charset=utf-8');
 
 /*
@@ -50,7 +59,7 @@ function normalize_bool_param($value): bool
     }
 
     $value = strtolower((string)$value);
-    return in_array($value, ['1', 'true', 'yes', 'on'], true);
+    return in_array($value, ['1', 'true', 'yes', 'on', 'sure', 'definitely', 'affirmative', 'yep', 'ja', 'visst'], true);
 }
 
 /*
