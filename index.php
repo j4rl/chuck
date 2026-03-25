@@ -15,7 +15,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
+    http_response_code(204); //204 means "No Content" - vi behöver inte skicka något svar på en OPTIONS-förfrågan
     exit;
 }
 
@@ -37,7 +37,7 @@ $db_name = 'db_example';
 | Hjälpfunktioner
 |--------------------------------------------------------------------------
 */
-function send_json(array $data, int $status = 200): void
+function send_json(array $data, int $status = 200): void //Man 'deklarerar' funktionen som void, vilket betyder att funktionen inte returnerar något värde
 {
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
@@ -67,7 +67,10 @@ function normalize_bool_param($value): bool
 | Felhantering
 |--------------------------------------------------------------------------
 */
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); 
+// Detta gör att mysqli kommer att kasta undantag (exceptions) istället för att bara returnera false vid fel.
+// Det gör det lättare att hantera fel på ett konsekvent sätt med try-catch
+// mysqli_report är en funktion för att sätta rapporteringnivå för mysqli.
 
 try {
     /*
@@ -75,7 +78,7 @@ try {
     | Anslut till databasen
     |--------------------------------------------------------------------------
     */
-    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name); // Skapa en ny mysqli-anslutning med objektorienterad syntax
     $conn->set_charset('utf8mb4');
 
     /*
@@ -83,12 +86,12 @@ try {
     | Läs parametrar
     |--------------------------------------------------------------------------
     */
-    $idRaw     = $_GET['id'] ?? null;
+    $idRaw     = $_GET['id'] ?? null; // Finns $_GET['id'] annars sätt det till null (You know... )
     $countRaw  = $_GET['count'] ?? null;
     $searchRaw = $_GET['search'] ?? null;
     $allRaw    = $_GET['all'] ?? null;
 
-    $hasId     = $idRaw !== null && $idRaw !== '';
+    $hasId     = $idRaw !== null && $idRaw !== ''; // Hängslen och livrem
     $hasCount  = $countRaw !== null && $countRaw !== '';
     $hasSearch = $searchRaw !== null && trim((string)$searchRaw) !== '';
     $hasAll    = normalize_bool_param($allRaw);
