@@ -1,6 +1,22 @@
 <?php
 declare(strict_types=1);
 
+/* Detta API är ett enkelt API för att hämta slumpmässiga Chuck Norris-fakta.
+   Det är byggt i PHP och använder MySQLi för att ansluta till en MySQL-databas där fakta lagras.
+   Vi har förbättrat det tidigare "basic.php" genom att lägga till mer robust felhantering, 
+   stöd för flera olika typer av förfrågningar (hämta specifikt id, hämta flera slumpmässiga fakta, söka i fakta, etc.), 
+   och en mer konsekvent struktur för att skicka JSON-svar. 
+   Det är fortfarande ett enkelt API, men det är mer flexibelt och robust än det tidigare exemplet.
+   Felhanteringen är förbättrad genom att använda try-catch-block för att fånga både databasrelaterade fel och andra oväntade fel, 
+   och skicka tillbaka meningsfulla felmeddelanden i JSON-format. 
+   Vi har också lagt till en hjälpfunktion "send_json" för att standardisera hur vi skickar JSON-svar, 
+   och en "send_error" funktion för att skicka felmeddelanden på ett konsekvent sätt.
+   Det finns en väl utbyggd CORS-huvud som tillåter förfrågningar från alla domäner, och hanterar även OPTIONS-förfrågningar korrekt.
+   Även om vi skiter i OPTIONS-förfrågningar i det här enkla API:et, så är det viktigt att hantera dem korrekt för att säkerställa att CORS fungerar som det ska.
+   ------------------------------------------------------------------------
+   TL;DR: Man kan enkelt använda PHP för att bygga ett eget API.
+*/
+
 /*
 |--------------------------------------------------------------------------
 | CORS-huvud
@@ -110,9 +126,24 @@ try {
     if ($activeModes > 1) {
         send_error(
             'Ange bara en av parametrarna: id, count, search eller all.',
-            400
+            400 // 400 Bad Request - klienten har skickat en ogiltig förfrågan
         );
     }
+
+    /* This is a list of HTTP status and error codes you can use:
+    200 OK - Allt gick bra, och svaret innehåller det som efterfrågades.
+    204 No Content - Allt gick bra, men det finns ingen innehåll att returnera.
+    400 Bad Request - Klienten har skickat en ogiltig förfrågan, t.ex. ogiltiga parametrar.
+    401 Unauthorized - Förfrågan kräver autentisering, och klienten har inte autentiserats.
+    403 Forbidden - Klienten är autentiserad men har inte tillstånd att komma åt resursen.
+    404 Not Found - Det efterfrågade resursen kunde inte hittas.
+    418 I'm a teapot - Kan användas för att indikera att servern vägrar att brygga kaffe eftersom den är en tekanna.
+    500 Internal Server Error - Ett oväntat fel uppstod på servern, t.ex. databasfel.
+    501 Not Implemented - Den begärda funktionaliteten är inte implementerad på servern.
+    503 Service Unavailable - Servern är tillfälligt överbelastad eller under underhåll.
+    504 Gateway Timeout - Servern agerade som en gateway och fick ingen snabb respons från upstream-servern.
+    505 HTTP Version Not Supported - Servern stöder inte den HTTP-protokollversion som användes i förfrågan.
+    */
 
     /*
     |--------------------------------------------------------------------------
